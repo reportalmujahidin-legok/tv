@@ -33,7 +33,7 @@
 
     /* Jadwal Sholat */
     .jadwal {
-        position:absolute; bottom:40px; width:100%; background: rgba(0,0,0,0.2);
+        position:absolute; bottom:35px; width:100%; background: rgba(0,0,0,0);
         display: flex; justify-content: space-around; padding: 15px; font-size:2rem;
         border-top-left-radius:20px; border-top-right-radius:20px;
     }
@@ -45,20 +45,9 @@
         background: rgba(242, 223, 7,0.2); transform: scale(1.15); font-weight:bold;
     }
 
-    /* Running text */
-    .running-text {
-        position:absolute; bottom:0; width:100%; background: rgba(0,0,0,0.3);
-        white-space: nowrap; overflow: hidden; font-size:2rem; padding: 10px 0;
-    }
-    .running-text span {
-        display: inline-block;
-        padding-left: 100%;
-        animation: marquee 15s linear infinite;
-    }
-    @keyframes marquee {
-        0% { transform: translateX(0%); }
-        100% { transform: translateX(-100%); }
-    }
+   
+
+
 </style>
 </head>
 <body>
@@ -75,16 +64,16 @@
 
 
 <div class="jadwal" id="jadwalContainer">
-    <div id="Fajr" style="background: rgba(9, 235 ,9,0.3)"></div>
-    <div id="Dhuhr" style="background:rgba(228,98,240,0.3)"></div>
-    <div id="Asr" style="background:rgba(242 ,142 ,2,0.3)"></div>
-    <div id="Maghrib" style="background:rgba(9 ,235, 227,0.3)"></div>
-    <div id="Isha" style="background:rgba(50 ,126 ,240,0.3)"></div>
+    <div id="Fajr" style="background: rgba(9, 235 ,9,0.7)"></div>
+    <div id="Dhuhr" style="background:rgba(228,98,240,0.7)"></div>
+    <div id="Asr" style="background:rgba(242 ,142 ,2,0.7)"></div>
+    <div id="Maghrib" style="background:rgba(9 ,235, 227,0.7)"></div>
+    <div id="Isha" style="background:rgba(50 ,126 ,240,0.7)"></div>
 </div>
+<marquee id="marquee" style="position:absolute;bottom:0px;font-size:1.8em;background: rgba(0,0,0,0.8);padding:5px 0" behavior="scroll" direction="left" scrollamount="20">
+  Pengumuman awal
+</marquee>
 
-<div class="running-text">
-    <span id="pengumuman">Selamat datang di Masjid Al‑Mujahidin. Silakan ikuti protokol kesehatan. Jadwal pengajian malam ini pukul 19:30.</span>
-</div>
 
 <script>
    
@@ -497,7 +486,6 @@ function updateJadwalSholat(){
 	  fajr: 20,      // Subuh
 	  isha: 18,      // Isya
 	  asr: 'Standard', // Syafi'i
-	  maghrib: 0     // Sunset
 	});
 
 	PT.tune({
@@ -567,10 +555,27 @@ setInterval(updateJadwalSholat,60000); // tiap 1 menit
 
 
 
-const GITHUB_TOKEN = "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";
+const GITHUB_TOKEN = "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";
 const GITHUB_USER = "reportalmujahidin-legok";
 const GITHUB_REPO = "tv";
 const GITHUB_BRANCH = "main";
+
+// ===== Background Slide =====
+ 
+ imgs = new Array();
+ 
+ /*imgs = [
+	"https://images.unsplash.com/photo-1693590614566-1d3ea9ef32f7?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+	"https://images.unsplash.com/photo-1551041777-575d3855ca71?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+	"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+];*/
+
+
+
+let idx = 0;
+const bg = document.querySelector(".bg-slide");
+
+
 
 
 async function fetchGithubFile() {
@@ -587,32 +592,49 @@ async function fetchGithubFile() {
     if (data.encoding === "base64") {
       // Decode base64
       const text = atob(data.content.replace(/\s/g, ""));
-      return text;
+      const jobj= JSON.parse(text);
+	  
+	  const slides= jobj[0][0]["slides"];
+	  const kas_info = jobj[1][0]["kas"];
+	  const khatib = jobj[2][0]["khatib"];
+	  const runText = jobj[3][0]["runText"];
+	  
+	  slides.forEach(function(item, index) {
+		  imgs.push(item);
+	  });
+	  
+	  if(runText!= ""){
+		const el = document.getElementById("marquee");
+		
+		 el.innerHTML = runText;
+
+  
+	  }
+	  
+	 
+	 nextBG();
+	 setInterval(nextBG, 8000);
+
+	  
+	  console.log(runText);
+	  
     }
 
   } catch (err) {
-    console.error(err);
+     console.error(err);
   }
 }
 
 // Jalankan
-console.log(await fetchGithubFile());
+fetchGithubFile();
 
 
-// ===== Background Slide =====
- imgs = [
-	"https://plus.unsplash.com/premium_photo-1686729237226-0f2edb1e8970?q=80&w=1267&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-	"https://images.unsplash.com/photo-1508739773434-c26b3d09e071?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-	"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-];
-let idx = 0;
-const bg = document.querySelector(".bg-slide");
+
 function nextBG() {
 	bg.style.backgroundImage = `url(${imgs[idx]})`;
 	idx = (idx + 1) % imgs.length;
 }
-nextBG();
-setInterval(nextBG, 8000);
+
 	
 	
 	
