@@ -17,7 +17,7 @@
     .overlay{ position: fixed; width:100%; height:100%; background: rgba(0,0,0,0.4); z-index:-1; }
 
     /* Header */
-    .header { text-align:center; padding: 5px; background: rgba(0,0,0,0.2)}
+    .header { text-align:center; padding: 5px; background: rgba(0,0,0,0.7)}
     .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 6px #000; }
     #datetime,#hijri { margin-top: 0px; font-size: 1.6rem; text-shadow: 1px 1px 6px #000;color:#bfa306 }
 	#datetime{position: absolute; top: 3px; left: 10px;}
@@ -44,6 +44,36 @@
     .jadwal .highlight {
         background: rgba(242, 223, 7,0.2); transform: scale(1.15); font-weight:bold;
     }
+	
+	
+  .saldo-box {
+	  width: 320px;
+	  padding: 18px 22px;
+	  background: rgba(255, 255 ,255,0.8);
+	  border-radius: 14px; /* ujung agak bulat */
+	  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+	  font-family: "Segoe UI", system-ui, sans-serif;
+
+	  margin-top:10px;margin-left:10px;
+	}
+
+.label {
+  font-size: 1.8rem;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.amount {
+  font-size: 35px;
+  font-weight: 600;
+  color: #0f766e; /* hijau tenang */
+}
+
+.date {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #9ca3af;
+}
 
    
 
@@ -61,8 +91,28 @@
 	<span id="hijri"></span>
 </div>
 
+<div style="width:150px;margin-top:10px">
+	<div class="saldo-box">
+	  <div class="label">Pemasukan</div>
+	  <div class="amount" id="debit">Rp 0</div>
+	  
+	</div>
 
 
+	<div class="saldo-box">
+	  <div class="label">Pengeluaran</div>
+	  <div class="amount" id="kredit">Rp 0</div>
+	  
+	</div>
+	
+	
+	<div class="saldo-box">
+	  <div class="label">Saldo akhir</div>
+	  <div class="amount" id="saldo">Rp 0</div>
+	  
+	</div>
+	
+</div>
 
 <div class="jadwal" id="jadwalContainer">
     <div id="Fajr" style="background: rgba(9, 235 ,9,0.7)"></div>
@@ -605,6 +655,10 @@ async function fetchGithubFile() {
 
   
 	  }
+	  
+	  document.getElementById("debit").innerHTML="Rp"+kas_info['debit'];
+	  document.getElementById("kredit").innerHTML="Rp"+kas_info['kredit'];
+	  document.getElementById("saldo").innerHTML="Rp"+kas_info['saldo'];
 	  
 	 
 	 nextBG();
