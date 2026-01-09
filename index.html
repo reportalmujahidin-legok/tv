@@ -63,6 +63,7 @@
 
 
 
+
 <div class="jadwal" id="jadwalContainer">
     <div id="Fajr" style="background: rgba(9, 235 ,9,0.7)"></div>
     <div id="Dhuhr" style="background:rgba(228,98,240,0.7)"></div>
@@ -555,11 +556,6 @@ setInterval(updateJadwalSholat,60000); // tiap 1 menit
 
 
 
-const GITHUB_TOKEN = "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";
-const GITHUB_USER = "reportalmujahidin-legok";
-const GITHUB_REPO = "tv";
-const GITHUB_BRANCH = "main";
-
 // ===== Background Slide =====
  
  imgs = new Array();
@@ -579,20 +575,19 @@ const bg = document.querySelector(".bg-slide");
 
 
 async function fetchGithubFile() {
-  const url = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/slide/slide.txt?ref=${GITHUB_BRANCH}`;
+  const url = "https://reportalmujahidin-legok.github.io/tv/slide/slide.txt";
 
   const headers = {};
-  if (GITHUB_TOKEN) headers["Authorization"] = `Bearer ${GITHUB_TOKEN}`;
+  
 
   try {
     const res = await fetch(url, { headers });
     if (!res.ok) throw new Error(res.status + " " + res.statusText);
-    const data = await res.json();
+    const jobj = await res.json();
 
-    if (data.encoding === "base64") {
-      // Decode base64
-      const text = atob(data.content.replace(/\s/g, ""));
-      const jobj= JSON.parse(text);
+    
+      
+      //const jobj= JSON.parse(data);
 	  
 	  const slides= jobj[0][0]["slides"];
 	  const kas_info = jobj[1][0]["kas"];
@@ -618,7 +613,9 @@ async function fetchGithubFile() {
 	  
 	  console.log(runText);
 	  
-    }
+	  
+	 
+   
 
   } catch (err) {
      console.error(err);
