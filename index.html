@@ -17,16 +17,16 @@
     .overlay{ position: fixed; width:100%; height:100%; background: rgba(0,0,0,0.4); z-index:-1; }
 
     /* Header */
-    .header { text-align:center; padding: 5px; background: rgba(0,0,0,0.7)}
-    .header h1 { font-size: 1.8rem; text-shadow: 2px 2px 6px #000; }
-    #datetime,#hijri { margin-top: 0px; font-size: 1.6rem; text-shadow: 1px 1px 6px #000;color:#bfa306 }
+    .header { text-align:right; padding: 5px;}
+    .header h1 { font-size: 3rem; text-shadow: 3px 3px 6px #000;-webkit-text-stroke: 1px black; }
+    #datetime,#hijri { margin-top: 0px; font-size: 3rem; text-shadow: 3px 3px 6px #000;color:#bfa306;-webkit-text-stroke: 1px black;font-weight:bold }
 	#datetime{position: absolute; top: 3px; left: 10px;}
 
 	.nm_jadwal {padding:5px;font-size: 1.8rem; text-shadow: 1px 1px 6px #000; background: rgba(255, 255, 255, 0.2);}
     /* Countdown kiri atas */
     #countdown {
-        position: absolute; top: 10px; left: 10px;
-        font-size: 1.3rem; padding: 8px 12px;
+        position:absolute;bottom:185px;margin-left:20px;
+        font-size: 2rem; padding: 8px 12px;
         background: rgba(0,0,0,0.5); border-radius: 8px;
         text-shadow: 1px 1px 3px #000;
     }
@@ -50,7 +50,7 @@
 	  width: 320px;
 	  padding: 18px 22px;
 	  background: rgba(255, 255 ,255,0.8);
-	  border-radius: 14px; /* ujung agak bulat */
+	  border-radius: 20px; /* ujung agak bulat */
 	  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 	  font-family: "Segoe UI", system-ui, sans-serif;
 
@@ -114,8 +114,11 @@
 	
 </div>
 
+<span id="countdown"></span>
 <div class="jadwal" id="jadwalContainer">
+    
     <div id="Fajr" style="background: rgba(9, 235 ,9,0.7)"></div>
+	<div id="terbit" style="background: rgba(245, 66, 99,0.7)"></div>
     <div id="Dhuhr" style="background:rgba(228,98,240,0.7)"></div>
     <div id="Asr" style="background:rgba(242 ,142 ,2,0.7)"></div>
     <div id="Maghrib" style="background:rgba(9 ,235, 227,0.7)"></div>
@@ -532,7 +535,8 @@ if (typeof module !== 'undefined' && module.exports) {
 function updateJadwalSholat(){
 
 	const PT = new PrayTime('ISNA');
-
+    const now = new Date();
+	
 	PT.adjust({
 	  fajr: 20,      // Subuh
 	  isha: 18,      // Isya
@@ -553,11 +557,58 @@ function updateJadwalSholat(){
 	times=PT.getTimes();
 	//console.log(times);
 	document.getElementById("Fajr").innerHTML="<div class='nm_jadwal'>Shubuh</div><div>"+times.fajr+"</div>";
+	document.getElementById("terbit").innerHTML="<div class='nm_jadwal'>Terbit</div><div>"+times.sunrise+"</div>";
 	document.getElementById("Dhuhr").innerHTML="<div class='nm_jadwal'>Dzuhur</div><div>"+times.dhuhr+"</div>";
 	document.getElementById("Asr").innerHTML="<div class='nm_jadwal'>Ashar</div><div>"+times.asr+"</div>";
 	document.getElementById("Maghrib").innerHTML="<div class='nm_jadwal'>Maghrib</div><div>"+times.maghrib+"</div>";
 	document.getElementById("Isha").innerHTML="<div class='nm_jadwal'>Isya</div><div>"+times.isha+"</div>";
 	
+	
+	 // Urutan sholat yang dihitung
+  const prayers = [
+    { name: "Subuh",   time: times.fajr },
+	{ name: "Terbit",   time: times.sunrise },
+    { name: "Dzuhur",  time: times.dhuhr },
+    { name: "Ashar",   time: times.asr },
+    { name: "Maghrib", time: times.maghrib },
+    { name: "Isya",    time: times.isha }
+  ];
+
+  let nextPrayer = null;
+
+  for (const p of prayers) {
+    const [h, m] = p.time.split(":").map(Number);
+    const t = new Date();
+    t.setHours(h, m, 0, 0);
+
+    if (t > now) {
+      nextPrayer = { name: p.name, time: t };
+      break;
+    }
+  }
+
+  // Kalau semua sudah lewat → Subuh besok
+  if (!nextPrayer) {
+    const [h, m] = times.fajr.split(":").map(Number);
+    const t = new Date();
+    t.setDate(t.getDate() + 1);
+    t.setHours(h, m, 0, 0);
+    nextPrayer = { name: "Subuh", time: t };
+  }
+
+  const diff = nextPrayer.time - now;
+
+  const hours   = Math.floor(diff / 3600000);
+  const minutes = Math.floor((diff % 3600000) / 60000);
+  const seconds = Math.floor((diff % 60000) / 1000);
+
+  document.getElementById("countdown").innerHTML =
+    `Menuju <b>${nextPrayer.name}</b> : ` +
+    `${String(hours).padStart(2,"0")}:` +
+    `${String(minutes).padStart(2,"0")}:` +
+    `${String(seconds).padStart(2,"0")}`;
+
+
 	
 
 }
@@ -600,7 +651,7 @@ setInterval(updateDateTime, 1000);
 
 
 updateJadwalSholat();
-setInterval(updateJadwalSholat,60000); // tiap 1 menit
+setInterval(updateJadwalSholat,1000); // tiap 1 detik
 
 
 
@@ -625,7 +676,10 @@ const bg = document.querySelector(".bg-slide");
 
 
 async function fetchGithubFile() {
-  const url = "https://reportalmujahidin-legok.github.io/tv/slide/slide.txt";
+  const d = new Date();
+  const timestamp = d.getTime();
+	  
+  const url = "https://reportalmujahidin-legok.github.io/tv/slide/slide.txt?nc="+timestamp;
 
   const headers = {};
   
@@ -644,6 +698,8 @@ async function fetchGithubFile() {
 	  const khatib = jobj[2][0]["khatib"];
 	  const runText = jobj[3][0]["runText"];
 	  
+	  imgs=[];
+	  idx=0;
 	  slides.forEach(function(item, index) {
 		  imgs.push(item);
 	  });
@@ -665,7 +721,7 @@ async function fetchGithubFile() {
 	 setInterval(nextBG, 8000);
 
 	  
-	  //console.log(runText);
+	  console.log(runText);
 	  
 	  
 	 
@@ -678,7 +734,7 @@ async function fetchGithubFile() {
 
 // Jalankan
 fetchGithubFile();
-
+setInterval(fetchGithubFile, 60000);
 
 
 function nextBG() {
