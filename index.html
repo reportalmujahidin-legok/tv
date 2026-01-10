@@ -52,7 +52,7 @@
   .saldo-box {
 	  width: 320px;
 	  padding: 18px 22px;
-	  background: rgba(255, 255 ,255,0.8);
+	  
 	  border-radius: 20px; /* ujung agak bulat */
 	  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 	  font-family: "Segoe UI", system-ui, sans-serif;
@@ -89,27 +89,24 @@
 
 
 <span id="datetime"></span>
-<div class="header">
-    <h1>Masjid Al‑Mujahidin</h1>
-	<span id="hijri"></span>
-</div>
 
-<div style="width:150px;margin-top:10px">
-	<div class="saldo-box">
-	  <div class="label">Pemasukan</div>
+
+<div style="width:150px;margin-top:150px;">
+	<div class="saldo-box" style="Background:rgba(0, 247, 255,1)">
+	  <div class="label" >Pemasukan</div>
 	  <div class="amount" id="debit">Rp 0</div>
 	  
 	</div>
 
 
-	<div class="saldo-box">
+	<div class="saldo-box"  style="Background:rgba(176, 255, 250,1)">
 	  <div class="label">Pengeluaran</div>
 	  <div class="amount" id="kredit">Rp 0</div>
 	  
 	</div>
 	
 	
-	<div class="saldo-box">
+	<div class="saldo-box" style="Background:rgba(103, 178, 216,1)">
 	  <div class="label">Saldo akhir</div>
 	  <div class="amount" id="saldo">Rp 0</div>
 	  
@@ -120,12 +117,12 @@
 <span id="countdown"></span>
 <div class="jadwal" id="jadwalContainer">
     
-    <div id="Fajr" style="background: rgba(9, 235 ,9,0.7)"></div>
-	<div id="terbit" style="background: rgba(245, 66, 99,0.7)"></div>
-    <div id="Dhuhr" style="background:rgba(228,98,240,0.7)"></div>
-    <div id="Asr" style="background:rgba(242 ,142 ,2,0.7)"></div>
-    <div id="Maghrib" style="background:rgba(9 ,235, 227,0.7)"></div>
-    <div id="Isha" style="background:rgba(50 ,126 ,240,0.7)"></div>
+    <div id="Fajr" style="background: rgba(9, 235 ,9,0.8);font-weight:bold"></div>
+	<div id="terbit" style="background: rgba(245, 66, 99,0.8)"></div>
+    <div id="Dhuhr" style="background:rgba(228,98,240,0.8)"></div>
+    <div id="Asr" style="background:rgba(242 ,142 ,2,0.8)"></div>
+    <div id="Maghrib" style="background:rgba(9 ,235, 227,0.8)"></div>
+    <div id="Isha" style="background:rgba(50 ,126 ,240,0.8)"></div>
 </div>
 <marquee id="marquee" style="position:absolute;bottom:0px;font-size:1.8em;background: rgba(0,0,0,0.8);padding:5px 0" behavior="scroll" direction="left" scrollamount="20">
   Pengumuman awal
@@ -622,10 +619,10 @@ function updateDateTime() {
 
   // === TANGGAL & JAM MASEHI ===
   const tanggalMasehi = now.toLocaleDateString("id-ID", {
-    weekday: "long",
+    weekday: "short",
     day: "numeric",
-    month: "long",
-    year: "numeric"
+    month: "short",
+    year: "2-digit"
   });
 
   const jam = now.toLocaleTimeString("id-ID", {
@@ -634,8 +631,7 @@ function updateDateTime() {
     second: "2-digit"
   });
 
-  document.getElementById("datetime").innerHTML =
-    `${tanggalMasehi}<br>${jam} WIB`;
+  
 
   // === TANGGAL HIJRIYAH ===
   const hijri = new Intl.DateTimeFormat("id-ID-u-ca-islamic", {
@@ -644,8 +640,10 @@ function updateDateTime() {
     year: "numeric"
   }).format(now);
 
-  document.getElementById("hijri").innerHTML =
-    `${hijri}`;
+  document.getElementById("datetime").innerHTML =
+    `${tanggalMasehi} Pukul: ${jam} WIB<br>${hijri}`;
+	
+  
 }
 
 // Update setiap detik
