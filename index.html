@@ -752,13 +752,16 @@ setInterval(fetchGithubFile, 60000);
 
 
 function nextBG() {
+	if(idx >= imgs.length){
+		idx=0;
+	}
 	if(imgs.length > 0){
-	bg.style.backgroundImage = `url(${imgs[idx].src})`;
-
-	console.log( `url(${imgs[idx].src})`);
-		
-	idx = (idx + 1) % imgs.length;
-    console.log("idx="+idx);
+		bg.style.backgroundImage = `url(${imgs[idx].src})`;
+	
+		console.log( `url(${imgs[idx].src})`);
+			
+		idx = (idx + 1);
+	    console.log("idx="+idx);
     		
 	}
 }
