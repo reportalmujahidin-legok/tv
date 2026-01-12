@@ -1,144 +1,232 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jadwal Sholat Tangerang - Masjid Al‑Mujahidin</title>
-<style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body, html { height: 100%; width: 100%; font-family: Arial, sans-serif; color: #fff; overflow: hidden; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jadwal Sholat & Kas Masjid</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
 
-    /* Background slide */
-    .bg-slide{
-	   background-size: cover;
-        position: fixed; top:0; left:0; width:100%; height:100%;
+    body {
+      min-height: 100vh;
+      background: #f3f4f6;
+    }
+
+    /* WRAPPER UTAMA */
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      grid-template-rows: 1fr auto;
+      gap: 16px;
+      padding: 16px;
+    }
+
+    /* SIDEBAR KIRI */
+    .sidebar {
+      grid-row: 1 / span 2; /* full tinggi */
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar h3 {
+      text-align: center;
+      font-size: 16px;
+    }
+
+    /* WAKTU SHOLAT */
+    .prayer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px solid #e5e7eb;
+      font-size: 14px;
+    }
+
+    .prayer:last-child {
+      border-bottom: none;
+    }
+
+    .prayer-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .time {
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+    /* KAS MASJID */
+    .kas {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    .kas h4 {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .kas-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .kas-item.in { color: #059669; }
+    .kas-item.out { color: #dc2626; }
+
+    .kas-item.total {
+      border-top: 1px solid #d1d5db;
+      padding-top: 6px;
+      margin-top: 6px;
+      color: #1f2937;
+    }
+
+    /* CONTENT KANAN */
+    .content {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 10px;
+	  background-size: 100% 100%;
         background-position: center; transition: background-image 1s ease;
-        z-index: -2;
 		background-repeat: no-repeat;
-		
-    }
-    .overlay{ position: fixed; width:100%; height:100%; background: rgba(0,0,0,0.4); z-index:-1; }
-
-    /* Header */
-    .header { text-align:right; padding: 5px;}
-    .header h1 { font-size: 3rem; text-shadow: 3px 3px 6px #000;-webkit-text-stroke: 1px black; }
-    #datetime,#hijri { margin-top: 0px; font-size: 1.8rem; text-shadow: 1px 1px 3px #000;color:#bfa306;-webkit-text-stroke: 1px black;font-weight:bold }
-	#datetime{position: absolute; top: 3px; left: 10px;}
-
-	.nm_jadwal {padding:2px;font-size: 1rem; text-shadow: 1px 1px 6px #000; background: rgba(255, 255, 255, 0.2);}
-    /* Countdown kiri atas */
-    #countdown {
-        position:absolute;top:5px;right:10px;
-        font-size: 1rem; padding: 8px 12px;
-        background: rgba(0,0,0,0.9); border-radius: 30px;
-        text-shadow: 1px 1px 3px #000;
     }
 
-    /* Jadwal Sholat */
-    .jadwal {
-        position:absolute; bottom:50px;left:0; width:100%; background: rgba(0,0,0,0);
-        display: none; justify-content: space-around; padding: 2px; font-size:1rem;
-        border-top-left-radius:20px; border-top-right-radius:20px;
+    /* FOOTER KANAN SAJA */
+    .footer {
+      background: #1f2937;
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 10px ;
+      font-size: 1.8em;
+      overflow: hidden;
     }
-    .jadwal div {
-        text-align:center; flex:1; margin:0 3px; padding:5px;
-        transition:0.3s; border-radius: 10px;
-    }
-    .jadwal .highlight {
-        background: rgba(242, 223, 7,0.2); transform: scale(1.15); font-weight:bold;
+
+    @media (max-width: 768px) {
+      .layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+
+      .sidebar {
+        grid-row: auto;
+      }
     }
 	
+	#countdown {
+        padding:5px;
+        font-size: 1.3rem; padding: 8px 12px;
+        background: rgba(0,0,0,0.5); border-radius: 30px;
+		color : green;
+    }
 	
-  .saldo-box {
-	  width: 200px;
-	  padding: 10px 10px;
-	  
-	  border-radius: 20px; /* ujung agak bulat */
-	  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
-	  font-family: "Segoe UI", system-ui, sans-serif;
-
-	  margin-top:10px;margin-left:10px;
-	}
-
-.label {
-  font-size: 1rem;
-  color: #000;
-  margin-bottom: 2px;
-  Background:#FFF;
-  border-radius: 20px;
-  padding:3px;
-  font-weight:bold;
-  text-align: center
-}
-
-.amount {
-  font-size: 25px;
-  font-weight: 600;
-  color: #000; /* hijau tenang */
-}
-
-.date {
-  margin-top: 6px;
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-   
-
-
-</style>
+	#datetime{font-size:0.8rem;color:#000}
+  </style>
 </head>
 <body>
 
-<div class="bg-slide"></div>
+<div class="layout">
 
-
-<span id="datetime"></span>
-
-
-<div style="width:100px;margin-top:100px;">
-	<div class="saldo-box" style="Background:rgba(10, 199, 29,1)">
-	  <div class="label" >Pemasukan</div>
-	  <div class="amount" id="debit">Rp 0</div>
-	  
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+	<div id="datetime">
+		
 	</div>
+    <div>
+      <h3>Waktu Sholat</h3>
 
+      <div class="prayer">
+        <div class="prayer-left"><span class="icon">🌅</span>Subuh</div>
+        <span class="time" id="s1">04:45</span>
+      </div>
 
-	<div class="saldo-box"  style="Background:rgba(199, 10, 108,1)">
-	  <div class="label">Pengeluaran</div>
-	  <div class="amount" id="kredit">Rp 0</div>
+	  <div class="prayer">
+        <div class="prayer-left"><span class="icon">☀️</span>Dzuhur</div>
+        <span class="time" id="s2">12:05</span>
+      </div>
 	  
-	</div>
-	
-	
-	<div class="saldo-box" style="Background:rgba(199, 196, 10,1)">
-	  <div class="label">Saldo akhir</div>
-	  <div class="amount" id="saldo">Rp 0</div>
-	  
-	</div>
-	
+      <div class="prayer">
+        <div class="prayer-left"><span class="icon">☀️</span>Dzuhur</div>
+        <span class="time" id="s3">12:05</span>
+      </div>
+
+      <div class="prayer">
+        <div class="prayer-left"><span class="icon">🌤️</span>Ashar</div>
+        <span class="time" id="s4">15:25</span>
+      </div>
+
+      <div class="prayer">
+        <div class="prayer-left"><span class="icon">🌇</span>Maghrib</div>
+        <span class="time" id="s5">18:10</span>
+      </div>
+
+      <div class="prayer">
+        <div class="prayer-left"><span class="icon">🌙</span>Isya</div>
+        <span class="time" id="s6">19:20</span>
+      </div>
+    </div>
+
+    <div class="kas">
+      <h4>Kas Masjid</h4>
+
+      <div class="kas-item in">
+        <span>Pemasukan</span><span id="debit">Rp </span>
+      </div>
+
+      <div class="kas-item out">
+        <span>Pengeluaran</span><span id="kredit">Rp</span>
+      </div>
+
+      <div class="kas-item total">
+        <span>Sisa Saldo</span><span id="saldo">Rp</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <section class="content" id="content">
+		<span id="countdown"></span>
+  </section>
+
+  <!-- FOOTER (KANAN SAJA) -->
+  <div class="footer">
+    <marquee id="marquee" scrollamount="10">
+      📢 Pengumuman: Mohon jamaah mematikan HP saat sholat berlangsung •
+      Infaq dapat disalurkan melalui kotak amal masjid
+    </marquee>
+  </div>
+
 </div>
 
-<span id="countdown"></span>
-<div class="jadwal" id="jadwalContainer">
-    
-    <div id="Fajr" style="background: rgba(9, 235 ,9,0.8);font-weight:bold"></div>
-	<div id="terbit" style="background: rgba(245, 66, 99,0.8)"></div>
-    <div id="Dhuhr" style="background:rgba(228,98,240,0.8)"></div>
-    <div id="Asr" style="background:rgba(242 ,142 ,2,0.8)"></div>
-    <div id="Maghrib" style="background:rgba(9 ,235, 227,0.8)"></div>
-    <div id="Isha" style="background:rgba(50 ,126 ,240,0.8)"></div>
-</div>
-<marquee id="marquee" style="position:absolute;bottom:0px;font-size:1.8em;background: rgba(0,0,0,0.8);padding:5px 0" behavior="scroll" direction="left" scrollamount="10">
-  Pengumuman awal
-</marquee>
-
+</body>
 
 <script>
-   
 
-let imgs   
-	
 // praytime.js - Prayer Times Calculator (v3.2)
 // Copyright (c) 2007-2025 Hamid Zarrabi-Zadeh
 // Source: https://praytimes.org
@@ -561,12 +649,12 @@ function updateJadwalSholat(){
 	PT.location([-6.178306,106.631889]).timezone('Asia/Jakarta');
 	times=PT.getTimes();
 	//console.log(times);
-	document.getElementById("Fajr").innerHTML="<div class='nm_jadwal'>Shubuh</div><div>"+times.fajr+"</div>";
-	document.getElementById("terbit").innerHTML="<div class='nm_jadwal'>Terbit</div><div>"+times.sunrise+"</div>";
-	document.getElementById("Dhuhr").innerHTML="<div class='nm_jadwal'>Dzuhur</div><div>"+times.dhuhr+"</div>";
-	document.getElementById("Asr").innerHTML="<div class='nm_jadwal'>Ashar</div><div>"+times.asr+"</div>";
-	document.getElementById("Maghrib").innerHTML="<div class='nm_jadwal'>Maghrib</div><div>"+times.maghrib+"</div>";
-	document.getElementById("Isha").innerHTML="<div class='nm_jadwal'>Isya</div><div>"+times.isha+"</div>";
+	document.getElementById("s1").innerHTML=times.fajr;
+	document.getElementById("s2").innerHTML=times.sunrise;
+	document.getElementById("s3").innerHTML=times.dhuhr;
+	document.getElementById("s4").innerHTML=times.asr;
+	document.getElementById("s5").innerHTML=times.maghrib;
+	document.getElementById("s6").innerHTML=times.isha;
 	
 	
 	 // Urutan sholat yang dihitung
@@ -606,59 +694,18 @@ function updateJadwalSholat(){
   const hours   = Math.floor(diff / 3600000);
   const minutes = Math.floor((diff % 3600000) / 60000);
   const seconds = Math.floor((diff % 60000) / 1000);
-
-  document.getElementById("countdown").innerHTML =
+  
+  
+   document.getElementById("countdown").innerHTML =
     `Menuju <b>${nextPrayer.name}</b> : ` +
     `${String(hours).padStart(2,"0")}:` +
     `${String(minutes).padStart(2,"0")}:` +
     `${String(seconds).padStart(2,"0")}`;
-
-
 	
-
 }
-
-
-function updateDateTime() {
-  const now = new Date();
-
-  // === TANGGAL & JAM MASEHI ===
-  const tanggalMasehi = now.toLocaleDateString("id-ID", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "2-digit"
-  });
-
-  const jam = now.toLocaleTimeString("id-ID", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-
-  
-
-  // === TANGGAL HIJRIYAH ===
-  const hijri = new Intl.DateTimeFormat("id-ID-u-ca-islamic", {
-    day: "numeric",
-    month: "long",
-    year: "numeric"
-  }).format(now);
-
-  document.getElementById("datetime").innerHTML =
-    `${tanggalMasehi} Pukul: ${jam} WIB<br>${hijri}`;
-	
-  
-}
-
-// Update setiap detik
-updateDateTime();
-setInterval(updateDateTime, 1000);
-
 
 updateJadwalSholat();
 setInterval(updateJadwalSholat,1000); // tiap 1 detik
-
 
 
 
@@ -669,24 +716,14 @@ setInterval(updateJadwalSholat,1000); // tiap 1 detik
  curr_imgs = new Array();
  curr_slide_cksum="";
  
- /*imgs = [
-	"https://images.unsplash.com/photo-1693590614566-1d3ea9ef32f7?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-	"https://images.unsplash.com/photo-1551041777-575d3855ca71?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-	"https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-];*/
-
+ 
 
 
 let idx = 0;
-const bg = document.querySelector(".bg-slide");
+const bg = document.querySelector(".content");
 
 let timerBG;
 
-function isIdentical(a, b) {
-  if (a.length !== b.length) return false;
-
-  return a.every((val, i) => val === b[i]);
-}
 
 
 
@@ -721,7 +758,7 @@ async function fetchGithubFile() {
 	  
 	  
 	  slides.forEach(function(item, index) {
-		  console.log(item);
+		  //console.log(item);
 	      const img = new Image();
 			img.src = item;
 			imgs.push(img);
@@ -743,7 +780,7 @@ async function fetchGithubFile() {
   
 	  }
 	  
-	  document.getElementById("debit").innerHTML="Rp"+kas_info['debit'];
+	 document.getElementById("debit").innerHTML="Rp"+kas_info['debit'];
 	  document.getElementById("kredit").innerHTML="Rp"+kas_info['kredit'];
 	  document.getElementById("saldo").innerHTML="Rp"+kas_info['saldo'];
 	  
@@ -776,7 +813,7 @@ function nextBG() {
 	if(curr_imgs.length > 0){
 		bg.style.backgroundImage = `url(${curr_imgs[idx].src})`;
 	
-		console.log( `url(${curr_imgs[idx].src})`);
+		//console.log( `url(${curr_imgs[idx].src})`);
 			
 		idx = (idx + 1);
 	    console.log("idx="+idx);
@@ -784,11 +821,45 @@ function nextBG() {
 	}
 }
 
+
+function updateDateTime() {
+  const now = new Date();
+
+  // === TANGGAL & JAM MASEHI ===
+  const tanggalMasehi = now.toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    year: "2-digit"
+  });
+
+  const jam = now.toLocaleTimeString("id-ID", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+
+  
+
+  // === TANGGAL HIJRIYAH ===
+  const hijri = new Intl.DateTimeFormat("id-ID-u-ca-islamic", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  }).format(now);
+
+  document.getElementById("datetime").innerHTML =
+    `${tanggalMasehi} Pukul: ${jam} WIB<br>${hijri}`;
 	
-	
-	
+  
+}
+
+// Update setiap detik
+updateDateTime();
+setInterval(updateDateTime, 1000);
+
+
 
 </script>
 
-</body>
 </html>
