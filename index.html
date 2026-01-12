@@ -712,9 +712,8 @@ async function fetchGithubFile() {
 	  
 	  
 	  slides.forEach(function(item, index) {
-	      const img = new Image();
-			img.src = item;
-			imgs.push(img);
+	     
+			imgs.push(item);
 		 
 	  });
 	  
@@ -753,8 +752,8 @@ setInterval(fetchGithubFile, 60000);
 
 function nextBG() {
 	if(imgs.length > 0){
-	bg.style.backgroundImage = `url(${imgs[idx].src})`;
-	idx = (idx + 1) % imgs.length;
+		bg.style.backgroundImage = `url(${imgs[idx]})`;
+		idx = (idx + 1) % imgs.length;
 	}
 }
 
