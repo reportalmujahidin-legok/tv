@@ -666,6 +666,8 @@ setInterval(updateJadwalSholat,1000); // tiap 1 detik
 // ===== Background Slide =====
  
  imgs = new Array();
+ curr_imgs = new Array();
+ curr_slide_cksum="";
  
  /*imgs = [
 	"https://images.unsplash.com/photo-1693590614566-1d3ea9ef32f7?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -678,9 +680,16 @@ setInterval(updateJadwalSholat,1000); // tiap 1 detik
 let idx = 0;
 const bg = document.querySelector(".bg-slide");
 
-
-
 let timerBG;
+
+function isIdentical(a, b) {
+  if (a.length !== b.length) return false;
+
+  return a.every((val, i) => val === b[i]);
+}
+
+
+
 async function fetchGithubFile() {
   const d = new Date();
   const timestamp = d.getTime();
@@ -707,7 +716,7 @@ async function fetchGithubFile() {
 	  if(timerBG){
 		clearInterval(timerBG);
 		imgs=[];
-		idx=0;
+		
 	  }
 	  
 	  
@@ -718,6 +727,13 @@ async function fetchGithubFile() {
 			imgs.push(img);
 		 
 	  });
+	  
+	  if(curr_slide_cksum !== jobj[0][0]["cksum"]){
+			console.log("slide updated");
+			curr_slide_cksum = jobj[0][0]["cksum"];
+			curr_imgs = imgs;
+			idx=0;
+	  }
 	  
 	  if(runText!= ""){
 		const el = document.getElementById("marquee");
@@ -753,13 +769,14 @@ setInterval(fetchGithubFile, 60000);
 
 
 function nextBG() {
-	if(idx >= imgs.length){
+	if(idx >= curr_imgs.length){
 		idx=0;
+		
 	}
-	if(imgs.length > 0){
-		bg.style.backgroundImage = `url(${imgs[idx].src})`;
+	if(curr_imgs.length > 0){
+		bg.style.backgroundImage = `url(${curr_imgs[idx].src})`;
 	
-		console.log( `url(${imgs[idx].src})`);
+		console.log( `url(${curr_imgs[idx].src})`);
 			
 		idx = (idx + 1);
 	    console.log("idx="+idx);
