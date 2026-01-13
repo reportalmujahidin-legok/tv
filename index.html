@@ -17,6 +17,24 @@
       background: #fff;
     }
 
+	/* Countdown hari besar Islam (tengah atas) */
+		.islamic-countdown{
+		  position:absolute;
+		  top:20px;
+		  left:50%;
+		  transform:translateX(-50%);
+		  background:#ffffff;
+		  border-radius:12px;
+		  padding:6px 14px;
+		  font-size:16px;
+		  font-weight:bold;
+		  color:#065f46;
+		  box-shadow:0 2px 8px rgba(0,0,0,0.15);
+		  z-index:5;
+		}
+
+	
+
     /* WRAPPER UTAMA */
     .layout {
       min-height: 100vh;
@@ -133,7 +151,18 @@
       padding: 10px ;
       font-size: 1.8em;
       overflow: hidden;
+	  display:flex;
+	  align-items:center;
+	  gap:12px;
     }
+	
+	.footer span{
+		  white-space:nowrap; color:yellow;min-width:300px;
+		}
+
+		.footer marquee{
+		  flex:1;
+		}
 
     @media (max-width: 768px) {
       .layout {
@@ -149,12 +178,7 @@
 		Background:green;
 		display:block;
 	}
-	#countdown {
-        padding:5px;
-        font-size: 1.3rem; padding: 8px 12px;
-        background: rgba(0,0,0,0.5); border-radius: 30px;
-		color : green;
-    }
+	
 	
 	
 
@@ -224,11 +248,15 @@
 
   <!-- CONTENT -->
   <section class="content" id="content">
-		<span id="countdown"></span>
+		<div id="islamicCountdown" class="islamic-countdown" style="display:none"></div>
+
+
+		
   </section>
 
   <!-- FOOTER (KANAN SAJA) -->
   <div class="footer">
+	<span id="countdown"></span>
     <marquee id="marquee" scrollamount="10">
       📢 Pengumuman: Mohon jamaah mematikan HP saat sholat berlangsung •
       Infaq dapat disalurkan melalui kotak amal masjid
@@ -711,7 +739,7 @@ function updateJadwalSholat(){
   
   
    document.getElementById("countdown").innerHTML =
-    `Menuju <b>${nextPrayer.name}</b> : ` +
+    `<b>${nextPrayer.name}</b> : - ` +
     `${String(hours).padStart(2,"0")}:` +
     `${String(minutes).padStart(2,"0")}:` +
     `${String(seconds).padStart(2,"0")}`;
@@ -872,8 +900,87 @@ function updateDateTime() {
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
+</script>
 
+<script>
+// ============================================
+// Banner Tunggal: Hari Besar Islam & Ramadhan
+// ============================================
+
+const islamicEventsAll = [
+  { name: "Isra Mi'raj",  hDay: 27, hMonth: 7 },
+  { name: "Nuzulul Qur'an", hDay: 17, hMonth: 9 },
+  { name: "Idul Fitri",  hDay: 1,  hMonth: 10 },
+  { name: "Idul Adha",   hDay: 10, hMonth: 12 },
+  { name: "Maulid Nabi", hDay: 12, hMonth: 3 },
+  { name: "Ramadhan",   hDay: 1,  hMonth: 9 }
+];
+
+function getHijriParts2(date){
+  const fmt = new Intl.DateTimeFormat('en-TN-u-ca-islamic', { day:'numeric', month:'numeric', year:'numeric' });
+  const parts = fmt.formatToParts(date);
+  const get = (t)=> Number(parts.find(p=>p.type===t).value);
+  return { day:get('day'), month:get('month'), year:get('year') };
+}
+
+function findNextIslamicEventAll(){
+  const start = new Date();
+  for(let i=0;i<370;i++){
+    const d = new Date(start);
+    d.setDate(start.getDate()+i);
+    const h = getHijriParts2(d);
+    for(const ev of islamicEventsAll){
+      if(h.day===ev.hDay && h.month===ev.hMonth){
+        return { event:ev.name, date:d };
+      }
+    }
+  }
+  return null;
+}
+
+let nextEventAll = findNextIslamicEventAll();
+
+function updateUnifiedIslamicBanner(){
+  const el = document.getElementById('islamicCountdown');
+  if(!el) return;
+
+  if(!nextEventAll){
+    el.style.display='none';
+    return;
+  }
+
+  const now = new Date();
+  const diff = nextEventAll.date - now;
+
+  if(diff <= 0){
+    el.style.display='none';
+    nextEventAll = findNextIslamicEventAll();
+    return;
+  }
+
+  // hitung hari, dibulatkan ke atas
+  const days = Math.ceil(diff / (1000*60*60*24));
+
+  // tampilkan hanya jika <= 10 hari
+  if(days > 10){
+    el.style.display = 'none';
+    return;
+  }
+
+  const label = nextEventAll.event === 'Ramadhan'
+    ? 'Menuju Ramadhan'
+    : `Menuju ${nextEventAll.event}`;
+
+  el.innerHTML = `${label}: ${days} hari lagi`;
+  el.style.display='block';
+}
+
+updateUnifiedIslamicBanner();
+setInterval(updateUnifiedIslamicBanner, 60000); // update tiap 1 menit sudah cukup
 
 </script>
+
+
+
 
 </html>
