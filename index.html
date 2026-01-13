@@ -21,7 +21,7 @@
     .layout {
       min-height: 100vh;
       display: grid;
-      grid-template-columns: 250px 1fr;
+      grid-template-columns: 200px 1fr;
       grid-template-rows: 1fr auto;
       gap: 16px;
       padding: 16px;
@@ -50,7 +50,7 @@
       justify-content: space-between;
       padding: 4px 0;
       border-bottom: 1px solid #e5e7eb;
-      font-size: 14px;
+      font-size: 16px;
     }
 
     .prayer:last-child {
@@ -81,23 +81,30 @@
     .kas {
       background: #f9fafb;
       border-radius: 8px;
-      padding: 12px;
-      font-size: 16px;
+      padding: 3px;
+      font-size: 20px;
+	  text-align:center;
     }
 
     .kas h4 {
       text-align: center;
       margin-bottom: 8px;
+	  font-size: 16px;
     }
 
     .kas-item {
       display: flex;
+	  justify-content: flex-end; 
       justify-content: space-between;
       margin-bottom: 6px;
       font-weight: bold;
     }
-
-    .kas-item.in { color: #059669; }
+	
+	.kas-item .info {
+		  width: 100%;
+		  text-align: center;        /* teks angka rata kanan */
+		}
+    .kas-item.in { color: #059669;text-align:right}
     .kas-item.out { color: #dc2626; }
 
     .kas-item.total {
@@ -137,7 +144,10 @@
         grid-row: auto;
       }
     }
-	
+	.kas_title{
+		Background:green;
+		display:block;
+	}
 	#countdown {
         padding:5px;
         font-size: 1.3rem; padding: 8px 12px;
@@ -145,7 +155,7 @@
 		color : green;
     }
 	
-	#datetime{font-size:0.8rem;color:#000}
+	#datetime{font-size:0.8rem;color:#000;text-align:center;padding-bottom:10px}
   </style>
 </head>
 <body>
@@ -158,7 +168,7 @@
 		
 	</div>
     <div>
-      <h3>Waktu Sholat</h3>
+      <h3>🔆 Waktu Sholat 🔆</h3>
 
       <div class="prayer">
         <div class="prayer-left"><span class="icon">🌅</span>Subuh</div>
@@ -166,7 +176,7 @@
       </div>
 
 	  <div class="prayer">
-        <div class="prayer-left"><span class="icon">☀️</span>Dzuhur</div>
+        <div class="prayer-left"><span class="icon">🌄</span>Terbit</div>
         <span class="time" id="s2">12:05</span>
       </div>
 	  
@@ -192,18 +202,19 @@
     </div>
 
     <div class="kas">
-      <h4>Kas Masjid</h4>
+      <h4>🔆 Kas Masjid 🔆</h4>
 
       <div class="kas-item in">
-        <span>Pemasukan</span><span id="debit">Rp </span>
+        
+		<div id="debit" class="kasi info">Rp </div>
       </div>
 
       <div class="kas-item out">
-        <span>Pengeluaran</span><span id="kredit">Rp</span>
+        <div id="kredit" class="kas info">Rp</div>
       </div>
 
       <div class="kas-item total">
-        <span>Sisa Saldo</span><span id="saldo">Rp</span>
+        <span id="saldo" class="kas info">Rp</span>
       </div>
     </div>
   </aside>
@@ -829,7 +840,7 @@ function updateDateTime() {
   const tanggalMasehi = now.toLocaleDateString("id-ID", {
     weekday: "long",
     day: "numeric",
-    month: "short",
+    month: "long",
     year: "2-digit"
   });
 
@@ -849,7 +860,7 @@ function updateDateTime() {
   }).format(now);
 
   document.getElementById("datetime").innerHTML =
-    `${tanggalMasehi} Pukul: ${jam} WIB<br>${hijri}`;
+    `${tanggalMasehi} <br/><b>${jam} WIB</b><br><span style="color:green;font-size:16px"><b>${hijri}</b></span>`;
 	
   
 }
